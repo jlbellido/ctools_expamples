@@ -1,0 +1,4 @@
+name = Ctools examples module
+description = Module with some examples using ctools.
+core = 7.x
+
