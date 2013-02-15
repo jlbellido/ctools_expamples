@@ -1,2 +1,56 @@
 <?php
 
+/**
+ * Implements hook_menu().
+ */
+function ctools_examples_menu() {
+  $items = array();
+
+  $items['ctools_examples'] = array(
+    'title' => 'Ctools examples links',
+    'page callback' => 'ctools_exaples_main_page',
+    'access callback' => TRUE,
+    'type' => MENU_NORMAL_ITEM,
+  );
+  $items['ctools_examples/node-modal/%/%ctools_js'] = array(
+    'title' => 'Ctools examples links',
+    'page callback' => 'ctools_exaples_node_modal_callback',
+    'page arguments' => array(2, 3),
+    'access callback' => TRUE,
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+
+/**
+ * Main page callback.
+ */
+function ctools_exaples_main_page() {
+  ctools_include('modal');
+  ctools_include('ajax');
+
+  ctools_modal_add_js();
+
+  // Custom links:
+  $links = array();
+
+  $links[] = ctools_modal_text_button(t('Show a node in modal window'), 'ctools_examples/node-modal/1/nojs', t('Click for show a node in a modal window'));
+
+  return theme_item_list(array('title' => t('Ctools examples:'), 'items' => $links, 'type' => 'ol', 'attributes' => array()));
+}
+
+/**
+ * Node in modal window example page callback
+ */
+function ctools_exaples_node_modal_callback($nid, $js = NULL) {
+  ctools_include('modal');
+  ctools_include('ajax');
+
+  $node = node_load($nid);
+
+  // Content for modal window:
+  $contents = render(node_view($node, 'full', NULL));
+
+  return ctools_modal_render($node->title, $contents);
+}
