@@ -32,10 +32,14 @@ function ctools_exaples_main_page() {
 
   ctools_modal_add_js();
 
+  // Include Styles for own custom modal window:
+  ctool_examples_include_styles('modal_example');
+
   // Custom links:
   $links = array();
 
   $links[] = ctools_modal_text_button(t('Show a node in modal window'), 'ctools_examples/node-modal/1/nojs', t('Click for show a node in a modal window'));
+  $links[] = ctools_modal_text_button(t('Show a node in modal window(With styles)'), 'ctools_examples/node-modal/1/nojs', t('Click for show a node in a modal window'), 'ctools-modal-ctools-example-modal-style');
 
   return theme_item_list(array('title' => t('Ctools examples:'), 'items' => $links, 'type' => 'ol', 'attributes' => array()));
 }
@@ -53,4 +57,36 @@ function ctools_exaples_node_modal_callback($nid, $js = NULL) {
   $contents = render(node_view($node, 'full', NULL));
 
   return ctools_modal_render($node->title, $contents);
+}
+
+/**
+ * Include $style_type for a modal window.
+ */
+function ctool_examples_include_styles($style_type) {
+
+  $style_type = array(
+    'ctools-example-modal-style' => array(
+      'modalSize' => array(
+        'type' => 'fixed',
+        'width' => 1100,
+        'height' => 400,
+        'addWidth' => 10,
+        'addHeight' => 10,
+        'contentRight' => 0,
+        'contentBottom' => 0,
+      ),
+      'modalOptions' => array(
+        'opacity' => .6,
+        'background-color' => '#684C31',
+      ),
+      'animation' => 'fadeIn',
+      'modalTheme' => 'CToolsSampleModal',
+      'throbber' => theme('image', array('path' => ctools_image_path('throbber.gif', 'ctools_examples'), 'alt' => t('Loading...'), 'title' => t('Loading'))),
+      'closeImage' => theme('image', array('path' => ctools_image_path('modal-close.png', 'ctools_examples'), 'alt' => t('Close window'), 'title' => t('Close window'))),
+    ),
+  );
+  drupal_add_js($style_type, 'setting');
+
+  ctools_add_js('ctools-ajax-sample', 'ctools_ajax_sample');
+  ctools_add_css('ctools-ajax-sample', 'ctools_ajax_sample');
 }
