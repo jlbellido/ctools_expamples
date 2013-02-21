@@ -19,6 +19,13 @@ function ctools_examples_menu() {
     'access callback' => TRUE,
     'type' => MENU_NORMAL_ITEM,
   );
+  $items['ctools_examples/form/%ctools_js'] = array(
+    'title' => 'Ctools examples links',
+    'page callback' => 'ctools_exaples_form_callback',
+    'page arguments' => array(2),
+    'access callback' => TRUE,
+    'type' => MENU_NORMAL_ITEM,
+  );
 
   return $items;
 }
@@ -38,8 +45,9 @@ function ctools_exaples_main_page() {
   // Custom links:
   $links = array();
 
-  $links[] = ctools_modal_text_button(t('Show a node in modal window'), 'ctools_examples/node-modal/1/nojs', t('Click for show a node in a modal window'));
-  $links[] = ctools_modal_text_button(t('Show a node in modal window(With styles)'), 'ctools_examples/node-modal/1/nojs', t('Click for show a node in a modal window'), 'ctools-modal-ctools-example-modal-style');
+  $links[] = ctools_modal_text_button(t('Show a node in a modal window'), 'ctools_examples/node-modal/1/nojs', t('Click for show a node in a modal window'));
+  $links[] = ctools_modal_text_button(t('Show a node in a modal window(With styles)'), 'ctools_examples/node-modal/1/nojs', t('Click for show a node in a modal window'), 'ctools-modal-ctools-example-modal-style');
+  $links[] = ctools_modal_text_button(t('Show a form in a  modal window'), 'ctools_examples/form/nojs', t('Click for show a form in a modal window'), 'ctools-modal-ctools-example-modal-style');
 
   return theme_item_list(array('title' => t('Ctools examples:'), 'items' => $links, 'type' => 'ol', 'attributes' => array()));
 }
@@ -57,6 +65,47 @@ function ctools_exaples_node_modal_callback($nid, $js = NULL) {
   $contents = render(node_view($node, 'full', NULL));
 
   return ctools_modal_render($node->title, $contents);
+}
+
+/**
+ * Show a article node add form in a modal window. 
+ */
+function ctools_exaples_form_callback($js = NULL) {
+  global $user, $language;
+
+  if (!$js) {
+    return;
+  }
+
+  ctools_include('modal');
+  ctools_include('ajax');
+
+  module_load_include('inc', 'node', 'node.pages');
+
+  $node = (object) array(
+        'uid' => $user->uid,
+        'name' => (isset($user->name) ? $user->name : ''),
+        'type' => 'article',
+        'language' => $language->language,
+  );
+  $node->title = NULL;
+
+  node_object_prepare($node);
+
+  $form_state = array(
+    'ajax' => TRUE,
+    'title' => 'Add a new article',
+    'node' => $node,
+  );
+
+  $commands = ctools_modal_form_wrapper('article_node_form', $form_state);
+
+  if (!empty($form_state['executed'])) {
+    ctools_add_js('ajax-responder');
+    $commands[] = ctools_modal_command_display(t('Node Saved'), theme_status_messages(array('display' => 'status')));
+  }
+
+  print ajax_render($commands);
 }
 
 /**
@@ -80,13 +129,15 @@ function ctool_examples_include_styles($style_type) {
         'background-color' => '#684C31',
       ),
       'animation' => 'fadeIn',
-      'modalTheme' => 'CToolsSampleModal',
+      'modalTheme' => 'CToolsMyModalTheme',
+      'closeText' => t('Close'),
+      'modalmyclass' => 'my-custom-class',
       'throbber' => theme('image', array('path' => ctools_image_path('throbber.gif', 'ctools_examples'), 'alt' => t('Loading...'), 'title' => t('Loading'))),
       'closeImage' => theme('image', array('path' => ctools_image_path('modal-close.png', 'ctools_examples'), 'alt' => t('Close window'), 'title' => t('Close window'))),
     ),
   );
   drupal_add_js($style_type, 'setting');
 
-  ctools_add_js('ctools-ajax-sample', 'ctools_ajax_sample');
+  ctools_add_js('ctools_examples', 'ctools_examples');
   ctools_add_css('ctools-ajax-sample', 'ctools_ajax_sample');
 }
