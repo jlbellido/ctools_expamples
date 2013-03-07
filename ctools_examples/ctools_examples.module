@@ -27,6 +27,15 @@ function ctools_examples_menu() {
 	'type' => MENU_CALLBACK,
   );
   
+  $items['ctools_examples/multistep-form-modal/%ctools_js'] = array(
+    'title' => 'Ctools multistep form examples links',
+    'page callback' => 'ctools_examples_multistep_form_modal_callback',
+    'page arguments' => array(2),
+    'access callback' => TRUE,
+	'type' => MENU_CALLBACK,
+  );
+  
+  
   
   return $items;
 }
@@ -148,3 +157,73 @@ function ctools_examples_ctools_form($form, &$form_state){
 
 	return $form;	
 }
+
+/**
+ *  Callbact that generate the modal form using a multistep form
+ */
+ function ctools_examples_multistep_form_modal_callback($js = NULL, $step = NULL){
+	 //if there's no js
+	 if($js){
+		 return drupal_get_form('ctools_examples_ctools_multistep_form');
+	 }
+	 
+	 //Let's rock!!
+	 ctools_include('modal');
+     ctools_include('ajax');
+	 
+	 //Define multistep wizard
+	 $form_info = array(
+		 'id' => 'ctools_example',
+		 'path' => 'ctools_examples/multistep-form-modal/' . ($js ? 'ajax' : 'nojs') . '%step',
+		 'show trail' => TRUE,
+		 'show back' => TRUE,
+		 'show cancel' => TRUE,
+		 'show return' => TRUE,
+		 'next callback' => 'ctools_example_form_next',
+		 'finish callback' => 'ctools_example_form_finish',
+		 'cancel callback' => 'ctools_example_form_cancel',
+		 
+		 //Now the order!!
+		 'order' => array(
+			 'start' => array(
+				 'form_id' => 'ctools_examples_ctools_multistep_form_start',
+			 ),
+			 'second' => array(
+			 	'form_id' => 'ctools_examples_ctools_multistep_form_second',
+			 ),
+			 'third' => array(
+			 	'form_id' => 'ctools_examples_ctools_multistep_form_third',
+			 ),
+			 'last' => array(
+			 	'form_id' => 'ctools_examples_ctools_multistep_form_last',
+			 ),
+		 ),
+	 );
+ }
+ 
+ /**
+  * Multistep form 1 to be use in modal
+  */
+  function ctools_examples_ctools_multistep_form_start($form, &$form_state){
+  	
+  }
+  
+ /**
+  * Multistep form 2 to be use in modal
+  */
+  function ctools_examples_ctools_multistep_form_second($form, &$form_state){
+  	
+  }
+   
+  /**
+   * Multistep form 3 to be use in modal
+   */
+  function ctools_examples_ctools_multistep_form_third($form, &$form_state){
+  
+  }
+  /**
+   * Multistep form 4 to be use in modal
+   */
+  function ctools_examples_ctools_multistep_form_last($form, &$form_state){
+  
+    }
