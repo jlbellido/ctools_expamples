@@ -17,7 +17,7 @@ function ctools_examples_menu() {
     'page callback' => 'ctools_exaples_node_modal_callback',
     'page arguments' => array(2, 3),
     'access callback' => TRUE,
-    'type' => MENU_NORMAL_ITEM,
+    'type' => MENU_CALLBACK,
   );
 
   $items['ctools_examples/form/%ctools_js'] = array(
@@ -25,7 +25,7 @@ function ctools_examples_menu() {
     'page callback' => 'ctools_exaples_form_callback',
     'page arguments' => array(2),
     'access callback' => TRUE,
-    'type' => MENU_NORMAL_ITEM,
+    'type' => MENU_CALLBACK,
   );
   
   $items['ctools_examples/form-modal/%ctools_js'] = array(
