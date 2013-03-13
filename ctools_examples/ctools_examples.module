@@ -19,6 +19,7 @@ function ctools_examples_menu() {
     'access callback' => TRUE,
     'type' => MENU_NORMAL_ITEM,
   );
+
   $items['ctools_examples/form/%ctools_js'] = array(
     'title' => 'Ctools examples links',
     'page callback' => 'ctools_exaples_form_callback',
@@ -26,6 +27,22 @@ function ctools_examples_menu() {
     'access callback' => TRUE,
     'type' => MENU_NORMAL_ITEM,
   );
+  
+  $items['ctools_examples/form-modal/%ctools_js'] = array(
+    'title' => 'Ctools form examples links',
+    'page callback' => 'ctools_examples_form_modal_callback',
+    'page arguments' => array(2),
+    'access callback' => TRUE,
+	'type' => MENU_CALLBACK,
+  );
+  
+  $items['ctools_examples/multistep-form-modal/%ctools_js'] = array(
+    'title' => 'Ctools multistep form examples links',
+    'page callback' => 'ctools_examples_multistep_form_modal_callback',
+    'page arguments' => array(2),
+    'access callback' => TRUE,
+	'type' => MENU_CALLBACK,
+  ); 
 
   return $items;
 }
@@ -44,10 +61,12 @@ function ctools_exaples_main_page() {
 
   // Custom links:
   $links = array();
-
+  
   $links[] = ctools_modal_text_button(t('Show a node in a modal window'), 'ctools_examples/node-modal/1/nojs', t('Click for show a node in a modal window'));
   $links[] = ctools_modal_text_button(t('Show a node in a modal window(With styles)'), 'ctools_examples/node-modal/1/nojs', t('Click for show a node in a modal window'), 'ctools-modal-ctools-example-modal-style');
   $links[] = ctools_modal_text_button(t('Show a form in a  modal window'), 'ctools_examples/form/nojs', t('Click for show a form in a modal window'), 'ctools-modal-ctools-example-modal-style');
+  $links[] = ctools_modal_text_button(t('Show a form in modal window'), 'ctools_examples/form-modal/nojs', t('Click for show a form in a modal window'));
+  $links[] = ctools_modal_text_button(t('Show a multistep form in modal window'), 'ctools_examples/multistep-form-modal/nojs', t('Click for show a multistep form in a modal window'));
 
   return theme_item_list(array('title' => t('Ctools examples:'), 'items' => $links, 'type' => 'ol', 'attributes' => array()));
 }
@@ -141,3 +160,269 @@ function ctool_examples_include_styles($style_type) {
   ctools_add_js('ctools_examples', 'ctools_examples');
   ctools_add_css('ctools-ajax-sample', 'ctools_ajax_sample');
 }
+
+
+/**
+ * Callback that generate  the modal form using a simple form.
+ */
+function ctools_examples_form_modal_callback($js = NULL){
+	//if there's no js like old school!!
+	if(!$js){
+		return drupal_get_form('ctools_examples_ctools_form');
+	}
+	
+	//there's js!!
+    ctools_include('modal');
+    ctools_include('ajax');
+
+	$form_state = array(
+	    'title' => t('My modal form...'),
+	    'ajax' => TRUE,
+	  );
+
+	$output = ctools_modal_form_wrapper('ctools_examples_ctools_form', $form_state);
+	
+	if (!empty($form_state['executed'])) {
+	    // We'll just overwrite the form output if it was successful.
+	    $output = array();
+		$output[] = ctools_modal_command_display(t('Login Success'), '<div class="modal-message">Login successful. <a href="ctools_examples">Go back</a>.</div>');
+	  }
+	 
+	  print(ajax_render($output));
+      exit();        	
+}
+
+/**
+ * Simple form definition to be use in modal
+ */
+function ctools_examples_ctools_form($form, &$form_state){
+	
+	$form['text'] = array(
+	    '#type' => 'textfield',
+	    '#title' => t('Simple text'),
+	  );
+
+	$form['submit'] = array(
+	    '#type' => 'submit',
+	    '#value' => t('Submit'),
+	  );
+
+	return $form;	
+}
+
+/**
+ *  Callbact that generate the modal form using a multistep form
+ */
+ function ctools_examples_multistep_form_modal_callback($js = NULL, $step = NULL){
+	 //if there's no js
+	 if(!$js){
+		 return drupal_get_form('ctools_examples_ctools_multistep_form');
+	 }
+	 
+	 ctools_include('modal'); 
+	 ctools_include('ajax');
+	 
+	 //Define multistep wizard
+	 $form_info = array(
+		 'id' => 'ctools_examples',
+		 'path' => 'ctools_examples/multistep-form-modal/' . ($js ? 'ajax' : 'nojs') . '%step',
+		 'show trail' => TRUE,
+		 'show back' => TRUE,
+		 'show cancel' => TRUE,
+		 'show return' => TRUE,
+		 'next callback' => 'ctools_examples_form_next',
+		 'finish callback' => 'ctools_examples_form_finish',
+		 'cancel callback' => 'ctools_examples_form_cancel',
+		 
+		 //Now the order!!
+		 'order' => array(
+			 'start' => array(
+				 'form_id' => 'ctools_examples_ctools_multistep_form_start',
+			 ),
+			 'second' => array(
+			 	'form_id' => 'ctools_examples_ctools_multistep_form_second',
+			 ),
+			 'third' => array(
+			 	'form_id' => 'ctools_examples_ctools_multistep_form_third',
+			 ),
+			 'last' => array(
+			 	'form_id' => 'ctools_examples_ctools_multistep_form_last',
+			 ),
+		 ),
+	 );
+	
+	 $object_id = 'ctools_examples';
+	 if(empty($step)){
+		 test_ajax_sample_cache_clear($object_id);
+		 $step = 'start';
+	 }
+	 
+	 $object = test_ajax_sample_cache_get($object_id);
+	 
+	 //Define $form_state varibale
+	 $form_state = array(
+		 'ajax' => $js,
+		 'object_id' => $object_id,
+		 'object' => $object,
+	 );
+	 
+	 ctools_include('wizard');
+	 
+	 $form = ctools_wizard_multistep_form($form_info, $step, $form_sate);
+	 $output = drupal_render($form);
+	 
+	 //Response to any posible action (cancel, finish and continious)
+	 if($js){
+		 $commands = array();
+		 if($output	== FALSE || !empty($form_state['finish'])){
+			//@fran understand this section and change the class.
+		 	$commands[] = ajax_command_html('#ctools-sample', finish($form_state['object']));
+ 	        $commands[] = ctools_modal_command_dismiss();
+		 }else if(!empty($form_state['cancel'])){
+			$commands[] = ctools_modal_command_dismiss();
+		 }else{
+		 	$commands = ctools_modal_form_render($form_state, $output);
+		 }
+	 }
+	 
+	 print ajax_render($commands);
+	 exit();
+ }
+ 
+ /**
+  * Multistep form 1 to be use in modal
+  */
+  function ctools_examples_ctools_multistep_form_start($form, &$form_state){
+	  
+	  $form['name'] = array(
+	    '#type' => 'textfield',
+	    '#title' => t('Name'),
+	    '#description' => t('Name of the user'),
+	    '#size' => 10,
+	    '#maxlength' => 255,
+		'#required' => TRUE,
+		
+	  );
+	  $form['password'] = array(
+	    '#type' => 'password',
+	    '#title' => t('Password'),
+	    '#description' => t('Enter your password here.'),
+	    '#size' => 30,
+	    '#maxlength' => 64,
+		'#required' => TRUE,
+		
+	  );
+	  
+	  return $form;
+	  
+  }
+  
+ /**
+  * Multistep form 2 to be use in modal
+  */
+  function ctools_examples_ctools_multistep_form_second($form, &$form_state){
+	  
+	  $options = _ctools_examples_options1();
+  	  $form['what_do_you_like'] = array(
+  	    '#type' => 'checkboxes',
+  	    '#title' => t('What do you like'),
+  	    '#description' => t('What kind of job would you like to do?'),
+  	    '#options' => $options,
+  	    '#default_value' => array(),
+  	  );
+  	  
+	  return $form;
+  }
+   
+  /**
+   * Multistep form 3 to be use in modal
+   */
+  function ctools_examples_ctools_multistep_form_third($form, &$form_state){
+  	
+	  $form['what_do_you_expect'] = array(
+	    '#type' => 'textarea',
+	    '#title' => t('What do you expect?'),
+	    '#description' => t('What do you expect with Drupal?.'),
+	    '#cols' => 60,
+	    '#rows' => 5,
+	  );
+	  
+	  return $form;
+  }
+ /**
+  * Multistep form 4 to be use in modal
+  */
+ function ctools_examples_ctools_multistep_form_last($form, &$form_state){
+
+	 $form['attach'] = array(
+	   '#type' => 'file',
+	   '#title' => t('Attach'),
+	   '#description' => t('Select the file you want to attach.'),
+	   '#size' => 40,
+	 );
+	 
+	 return $form;
+ }
+
+/**
+ * Nest step function 
+ */
+ function ctools_examples_form_next(&$form_state){
+	 
+	  $form_state['object'] = $form_state['values'];
+	 _ctools_examples_form_next($form_state['object_id'], $form_state['object']);
+ }
+
+/**
+ * Nest step function 
+ */
+ function ctools_examples_form_finish(&$form_state){
+	 $form_state['finish'] = TRUE;
+ }
+
+/**
+ * Nest step function 
+ */
+ function ctools_examples_form_cancel(&$form_state){
+	$form_state['cancel'] = TRUE;
+ }
+
+/**
+ * Get group of options 1
+ */	
+
+function _ctools_examples_options1(){
+	 $options = array(
+		 'op1' => 'Program',
+		 'op2' => 'UX',
+		 'op3' => 'Themer',
+	 );
+	 return $options;
+ }
+ 
+ 
+ /**
+  * cache set method - Cache helpers
+  */
+  
+  function _ctools_examples_set($id, $object){
+	  ctools_include('object-cache');
+	  ctools_object_cache_set('', $id, $object);
+  }
+  
+  /**
+   * cache get method - Cache helpers
+   */
+  
+  function _ctools_examples_get($id){
+  	 ctools_include('object-cache');
+ 	 ctools_object_cache_get('', $id);
+  }
+  /**
+   * cache clear method - Cache helpers
+   */
+  
+  function _ctools_examples_clear($id){
+  	 ctools_include('object-cache');
+ 	 ctools_object_cache_clear('', $id);
+  }  
