@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Implements hook_menu().
  */
@@ -27,7 +26,7 @@ function ctools_examples_menu() {
 	'type' => MENU_CALLBACK,
   );
   
-  $items['ctools_examples/multistep-form-modal/%ctools_js'] = array(
+  $items['ctools_examples/multistep-form-modal/%ctools_js/form'] = array(
     'title' => 'Ctools multistep form examples links',
     'page callback' => 'ctools_examples_multistep_form_modal_callback',
     'page arguments' => array(2),
@@ -39,7 +38,6 @@ function ctools_examples_menu() {
   
   return $items;
 }
-knb
 /**
  * Main page callback.
  */
@@ -58,7 +56,7 @@ function ctools_exaples_main_page() {
   $links[] = ctools_modal_text_button(t('Show a node in modal window'), 'ctools_examples/node-modal/1/nojs', t('Click for show a node in a modal window'));
   $links[] = ctools_modal_text_button(t('Show a node in modal window(With styles)'), 'ctools_examples/node-modal/1/nojs', t('Click for show a node in a modal window'), 'ctools-modal-ctools-example-modal-style');
   $links[] = ctools_modal_text_button(t('Show a form in modal window'), 'ctools_examples/form-modal/nojs', t('Click for show a form in a modal window'));
-  $links[] = ctools_modal_text_button(t('Show a multistep form in modal window'), 'ctools_examples/multistep-form-modal/nojs', t('Click for show a multistep form in a modal window'));
+  $links[] = ctools_modal_text_button(t('Show a multistep form in modal window'), 'ctools_examples/multistep-form-modal/nojs/form', t('Click for show a multistep form in a modal window'));
 
 
 
@@ -167,7 +165,7 @@ function ctools_examples_ctools_form($form, &$form_state){
  function ctools_examples_multistep_form_modal_callback($js = NULL, $step = NULL){
 	 //if there's no js
 	 if(!$js){
-		 return drupal_get_form('ctools_examples_ctools_multistep_form');
+		 return drupal_get_form('ctools_examples_f');
 	 }
 	 
 	 ctools_include('modal'); 
@@ -175,46 +173,55 @@ function ctools_examples_ctools_form($form, &$form_state){
 	 
 	 //Define multistep wizard
 	 $form_info = array(
-		 'id' => 'ctools_examples',
-		 'path' => 'ctools_examples/multistep-form-modal/' . ($js ? 'ajax' : 'nojs') . '%step',
+		 'id' => 'ctools_examples_f',
+		 'path' => 'ctools_examples/multistep-form-modal/' . ($js ? 'ajax' : 'nojs') . '/form/%step',
 		 'show trail' => TRUE,
 		 'show back' => TRUE,
 		 'show cancel' => TRUE,
-		 'show return' => TRUE,
+		 'show return' => FALSE,
 		 'next callback' => 'ctools_examples_form_next',
 		 'finish callback' => 'ctools_examples_form_finish',
 		 'cancel callback' => 'ctools_examples_form_cancel',
 		 
 		 //Now the order!!
-		 'order' => array(
+	     'order' => array(
+	       'start' => t('Paso 1'),
+	       'second' => t('Paso 2'),
+		   //'third' => t('Pasito  3'),
+		   //'last' => t('Pasito 4'),
+	     ),
+		 
+		 //Now forms callbacks!!
+		 'forms' => array(
 			 'start' => array(
-				 'form_id' => 'ctools_examples_ctools_multistep_form_start',
+				 'form id' => 'ctools_examples_ctools_multistep_form_start',
 			 ),
 			 'second' => array(
-			 	'form_id' => 'ctools_examples_ctools_multistep_form_second',
+			 	'form id' => 'ctools_examples_ctools_multistep_form_second',
 			 ),
-			 'third' => array(
-			 	'form_id' => 'ctools_examples_ctools_multistep_form_third',
-			 ),
-			 'last' => array(
-			 	'form_id' => 'ctools_examples_ctools_multistep_form_last',
-			 ),
+			// 'third' => array(
+			// 	'form id' => 'ctools_examples_ctools_multistep_form_third',
+			// ),
+			// 'last' => array(
+			// 	'form_id' => 'ctools_examples_ctools_multistep_form_last',
+			// ),
 		 ),
 	 );
 	
-	 $object_id = 'ctools_examples';
+	 $object_id = 2;
 	 if(empty($step)){
-		 test_ajax_sample_cache_clear($object_id);
+		 _ctools_examples_clear($object_id);
 		 $step = 'start';
 	 }
 	 
-	 $object = test_ajax_sample_cache_get($object_id);
+	 $object = _ctools_examples_get($object_id);
 	 
 	 //Define $form_state varibale
 	 $form_state = array(
 		 'ajax' => $js,
 		 'object_id' => $object_id,
-		 'object' => $object,
+		 //that's important!!
+		 'object' => &$object,
 	 );
 	 
 	 ctools_include('wizard');
@@ -225,18 +232,18 @@ function ctools_examples_ctools_form($form, &$form_state){
 	 //Response to any posible action (cancel, finish and continious)
 	 if($js){
 		 $commands = array();
-		 if($output	== FALSE || !empty($form_state['finish'])){
+		 if($output	=== FALSE || !empty($form_state['finish'])){
 			//@fran understand this section and change the class.
-		 	$commands[] = ajax_command_html('#ctools-sample', finish($form_state['object']));
- 	        $commands[] = ctools_modal_command_dismiss();
+		 	//$commands[] = ajax_command_html('#ctools-sample', finish($form_state['object']));
+ 	        //$commands[] = ctools_modal_command_dismiss();
 		 }else if(!empty($form_state['cancel'])){
 			$commands[] = ctools_modal_command_dismiss();
 		 }else{
 		 	$commands = ctools_modal_form_render($form_state, $output);
 		 }
 	 }
-	 
-	 print ajax_render($commands);
+
+     print ajax_render($commands);
 	 exit();
  }
  
@@ -244,7 +251,8 @@ function ctools_examples_ctools_form($form, &$form_state){
   * Multistep form 1 to be use in modal
   */
   function ctools_examples_ctools_multistep_form_start($form, &$form_state){
-	  
+	  $form_state['title'] = t('Drupal Sevilla');
+
 	  $form['name'] = array(
 	    '#type' => 'textfield',
 	    '#title' => t('Name'),
@@ -263,11 +271,16 @@ function ctools_examples_ctools_form($form, &$form_state){
 		'#required' => TRUE,
 		
 	  );
+
 	  
 	  return $form;
 	  
   }
+  function ctools_examples_ctools_multistep_form_start_submit($form, &$form_state){
+	  $form_state['object']->name = $form_state['values']['name'];
+	  $form_state['object']->password = $form_state['values']['password'];
   
+  }
  /**
   * Multistep form 2 to be use in modal
   */
@@ -284,11 +297,13 @@ function ctools_examples_ctools_form($form, &$form_state){
   	  
 	  return $form;
   }
-   
+  function ctools_examples_ctools_multistep_form_second_submit($form, &$form_state){
+	  $form_state['object']->what_do_you_like = $form_state['values']['what_do_you_like'];
+  }   
   /**
    * Multistep form 3 to be use in modal
    */
-  function ctools_examples_ctools_multistep_form_third($form, &$form_state){
+  /*function ctools_examples_ctools_multistep_form_third($form, &$form_state){
   	
 	  $form['what_do_you_expect'] = array(
 	    '#type' => 'textarea',
@@ -299,11 +314,11 @@ function ctools_examples_ctools_form($form, &$form_state){
 	  );
 	  
 	  return $form;
-  }
+  }*/
  /**
   * Multistep form 4 to be use in modal
   */
- function ctools_examples_ctools_multistep_form_last($form, &$form_state){
+ /*function ctools_examples_ctools_multistep_form_last($form, &$form_state){
 
 	 $form['attach'] = array(
 	   '#type' => 'file',
@@ -313,15 +328,13 @@ function ctools_examples_ctools_form($form, &$form_state){
 	 );
 	 
 	 return $form;
- }
+ }*/
 
 /**
  * Nest step function 
  */
  function ctools_examples_form_next(&$form_state){
-	 
-	  $form_state['object'] = $form_state['values'];
-	 _ctools_examples_form_next($form_state['object_id'], $form_state['object']);
+	 _ctools_examples_set($form_state['object_id'], $form_state['object']);
  }
 
 /**
@@ -342,7 +355,7 @@ function ctools_examples_ctools_form($form, &$form_state){
  * Get group of options 1
  */	
 
- public function _ctools_examples_options1(){
+  function _ctools_examples_options1(){
 	 $options = array(
 		 'op1' => 'Program',
 		 'op2' => 'UX',
@@ -358,7 +371,7 @@ function ctools_examples_ctools_form($form, &$form_state){
   
   function _ctools_examples_set($id, $object){
 	  ctools_include('object-cache');
-	  ctools_object_cache_set('', $id, $object);
+	  ctools_object_cache_set('ctools_examples_f', $id, $object);
   }
   
   /**
@@ -367,7 +380,12 @@ function ctools_examples_ctools_form($form, &$form_state){
   
   function _ctools_examples_get($id){
   	 ctools_include('object-cache');
- 	 ctools_object_cache_get('', $id);
+ 	 $object = ctools_object_cache_get('ctools_examples_f', $id);
+	 if (!$object) {
+	     // Create a default object.
+	     $object = new stdClass;
+	   }
+	   return $object;
   }
   /**
    * cache clear method - Cache helpers
@@ -375,6 +393,6 @@ function ctools_examples_ctools_form($form, &$form_state){
   
   function _ctools_examples_clear($id){
   	 ctools_include('object-cache');
- 	 ctools_object_cache_clear('', $id);
+ 	 ctools_object_cache_clear('ctools_examples_f', $id);
   }
   
