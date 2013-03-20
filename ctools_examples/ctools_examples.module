@@ -64,8 +64,8 @@ function ctools_exaples_main_page() {
 
   $links[] = ctools_modal_text_button(t('Show a node in a modal window'), 'ctools_examples/node-modal/1/nojs', t('Click for show a node in a modal window'));
   $links[] = ctools_modal_text_button(t('Show a node in a modal window(With styles)'), 'ctools_examples/node-modal/1/nojs', t('Click for show a node in a modal window'), 'ctools-modal-ctools-example-modal-style');
-  $links[] = ctools_modal_text_button(t('Show a form in a  modal window'), 'ctools_examples/form/nojs', t('Click for show a form in a modal window'), 'ctools-modal-ctools-example-modal-style');
-  $links[] = ctools_modal_text_button(t('Show a form in modal window'), 'ctools_examples/form-modal/nojs', t('Click for show a form in a modal window'));
+  $links[] = ctools_modal_text_button(t('Show a article node form in a  modal window'), 'ctools_examples/form/nojs', t('Click for show a form in a modal window'), 'ctools-modal-ctools-example-modal-style');
+  $links[] = ctools_modal_text_button(t('Show a form in modal window'), 'ctools_examples/form-modal/nojs', t('Click for show a form in a modal window'), 'ctools-modal-ctools-form-example-modal-style');
   $links[] = ctools_modal_text_button(t('Show a multistep form in modal window'), 'ctools_examples/multistep-form-modal/nojs', t('Click for show a multistep form in a modal window'));
 
   return theme_item_list(array('title' => t('Ctools examples:'), 'items' => $links, 'type' => 'ol', 'attributes' => array()));
@@ -154,6 +154,27 @@ function ctool_examples_include_styles($style_type) {
       'throbber' => theme('image', array('path' => ctools_image_path('throbber.gif', 'ctools_examples'), 'alt' => t('Loading...'), 'title' => t('Loading'))),
       'closeImage' => theme('image', array('path' => ctools_image_path('modal-close.png', 'ctools_examples'), 'alt' => t('Close window'), 'title' => t('Close window'))),
     ),
+    'ctools-form-example-modal-style' => array(
+      'modalSize' => array(
+        'type' => 'fixed',
+        'width' => 300,
+        'height' => 300,
+        'addWidth' => 10,
+        'addHeight' => 10,
+        'contentRight' => 0,
+        'contentBottom' => 0,
+      ),
+      'modalOptions' => array(
+        'opacity' => .6,
+        'background-color' => '#684C31',
+      ),
+      'animation' => 'fadeIn',
+      'modalTheme' => 'CToolsMyModalTheme',
+      'closeText' => t('Close'),
+      'modalmyclass' => 'my-custom-class',
+      'throbber' => theme('image', array('path' => ctools_image_path('throbber.gif', 'ctools_examples'), 'alt' => t('Loading...'), 'title' => t('Loading'))),
+      'closeImage' => theme('image', array('path' => ctools_image_path('modal-close.png', 'ctools_examples'), 'alt' => t('Close window'), 'title' => t('Close window'))),
+    ),
   );
   drupal_add_js($style_type, 'setting');
 
@@ -198,6 +219,7 @@ function ctools_examples_ctools_form($form, &$form_state) {
 
   $form['text'] = array(
     '#type' => 'textfield',
+    '#size' => 30,
     '#title' => t('Simple text'),
   );
 
