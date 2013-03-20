@@ -165,7 +165,7 @@ function ctools_examples_ctools_form($form, &$form_state){
  function ctools_examples_multistep_form_modal_callback($js = NULL, $step = NULL){
 	 //if there's no js
 	 if(!$js){
-		 return drupal_get_form('ctools_examples_f');
+//		 return drupal_get_form('ctools_examples');
 	 }
 	 
 	 ctools_include('modal'); 
@@ -173,7 +173,7 @@ function ctools_examples_ctools_form($form, &$form_state){
 	 
 	 //Define multistep wizard
 	 $form_info = array(
-		 'id' => 'ctools_examples_f',
+		 'id' => 'ctools_examples',
 		 'path' => 'ctools_examples/multistep-form-modal/' . ($js ? 'ajax' : 'nojs') . '/form/%step',
 		 'show trail' => TRUE,
 		 'show back' => TRUE,
@@ -187,8 +187,6 @@ function ctools_examples_ctools_form($form, &$form_state){
 	     'order' => array(
 	       'start' => t('Paso 1'),
 	       'second' => t('Paso 2'),
-		   //'third' => t('Pasito  3'),
-		   //'last' => t('Pasito 4'),
 	     ),
 		 
 		 //Now forms callbacks!!
@@ -199,12 +197,6 @@ function ctools_examples_ctools_form($form, &$form_state){
 			 'second' => array(
 			 	'form id' => 'ctools_examples_ctools_multistep_form_second',
 			 ),
-			// 'third' => array(
-			// 	'form id' => 'ctools_examples_ctools_multistep_form_third',
-			// ),
-			// 'last' => array(
-			// 	'form_id' => 'ctools_examples_ctools_multistep_form_last',
-			// ),
 		 ),
 	 );
 	
@@ -233,7 +225,7 @@ function ctools_examples_ctools_form($form, &$form_state){
 	 if($js){
 		 $commands = array();
 		 if($output	=== FALSE || !empty($form_state['finish'])){
-			//@fran understand this section and change the class.
+			//@fran at the end I will use this
 		 	//$commands[] = ajax_command_html('#ctools-sample', finish($form_state['object']));
  	        //$commands[] = ctools_modal_command_dismiss();
 		 }else if(!empty($form_state['cancel'])){
@@ -300,36 +292,7 @@ function ctools_examples_ctools_form($form, &$form_state){
   function ctools_examples_ctools_multistep_form_second_submit($form, &$form_state){
 	  $form_state['object']->what_do_you_like = $form_state['values']['what_do_you_like'];
   }   
-  /**
-   * Multistep form 3 to be use in modal
-   */
-  /*function ctools_examples_ctools_multistep_form_third($form, &$form_state){
-  	
-	  $form['what_do_you_expect'] = array(
-	    '#type' => 'textarea',
-	    '#title' => t('What do you expect?'),
-	    '#description' => t('What do you expect with Drupal?.'),
-	    '#cols' => 60,
-	    '#rows' => 5,
-	  );
-	  
-	  return $form;
-  }*/
- /**
-  * Multistep form 4 to be use in modal
-  */
- /*function ctools_examples_ctools_multistep_form_last($form, &$form_state){
-
-	 $form['attach'] = array(
-	   '#type' => 'file',
-	   '#title' => t('Attach'),
-	   '#description' => t('Select the file you want to attach.'),
-	   '#size' => 40,
-	 );
-	 
-	 return $form;
- }*/
-
+  
 /**
  * Nest step function 
  */
@@ -371,7 +334,7 @@ function ctools_examples_ctools_form($form, &$form_state){
   
   function _ctools_examples_set($id, $object){
 	  ctools_include('object-cache');
-	  ctools_object_cache_set('ctools_examples_f', $id, $object);
+	  ctools_object_cache_set('ctools_examples', $id, $object);
   }
   
   /**
@@ -380,7 +343,7 @@ function ctools_examples_ctools_form($form, &$form_state){
   
   function _ctools_examples_get($id){
   	 ctools_include('object-cache');
- 	 $object = ctools_object_cache_get('ctools_examples_f', $id);
+ 	 $object = ctools_object_cache_get('ctools_examples', $id);
 	 if (!$object) {
 	     // Create a default object.
 	     $object = new stdClass;
@@ -393,6 +356,6 @@ function ctools_examples_ctools_form($form, &$form_state){
   
   function _ctools_examples_clear($id){
   	 ctools_include('object-cache');
- 	 ctools_object_cache_clear('ctools_examples_f', $id);
+ 	 ctools_object_cache_clear('ctools_examples', $id);
   }
   
