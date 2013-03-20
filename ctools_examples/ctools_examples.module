@@ -74,7 +74,6 @@ function ctools_exaples_main_page() {
   $links[] = '<div id="ctools-sample">' . t('Here will come result in modal case') . '</div>';
   
   return  array('#theme' => 'item_list', '#items' => $links);
-  //return theme_item_list(array('title' => t('Ctools examples:'), 'items' => $links, 'type' => 'ol', 'attributes' => array()));
 }
 
 /**
@@ -160,6 +159,27 @@ function ctool_examples_include_styles($style_type) {
       'throbber' => theme('image', array('path' => ctools_image_path('throbber.gif', 'ctools_examples'), 'alt' => t('Loading...'), 'title' => t('Loading'))),
       'closeImage' => theme('image', array('path' => ctools_image_path('modal-close.png', 'ctools_examples'), 'alt' => t('Close window'), 'title' => t('Close window'))),
     ),
+    'ctools-form-example-modal-style' => array(
+      'modalSize' => array(
+        'type' => 'fixed',
+        'width' => 300,
+        'height' => 300,
+        'addWidth' => 10,
+        'addHeight' => 10,
+        'contentRight' => 0,
+        'contentBottom' => 0,
+      ),
+      'modalOptions' => array(
+        'opacity' => .6,
+        'background-color' => '#684C31',
+      ),
+      'animation' => 'fadeIn',
+      'modalTheme' => 'CToolsMyModalTheme',
+      'closeText' => t('Close'),
+      'modalmyclass' => 'my-custom-class',
+      'throbber' => theme('image', array('path' => ctools_image_path('throbber.gif', 'ctools_examples'), 'alt' => t('Loading...'), 'title' => t('Loading'))),
+      'closeImage' => theme('image', array('path' => ctools_image_path('modal-close.png', 'ctools_examples'), 'alt' => t('Close window'), 'title' => t('Close window'))),
+    ),
   );
   drupal_add_js($style_type, 'setting');
 
@@ -204,6 +224,7 @@ function ctools_examples_ctools_form($form, &$form_state) {
 
   $form['text'] = array(
     '#type' => 'textfield',
+    '#size' => 30,
     '#title' => t('Simple text'),
   );
 
