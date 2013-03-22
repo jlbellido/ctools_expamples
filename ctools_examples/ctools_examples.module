@@ -7,13 +7,13 @@ function ctools_examples_menu() {
   $items = array();
 
   $items['ctools_examples'] = array(
-    'title' => 'Ctools examples links',
+    'title' => 'CTools examples links',
     'page callback' => 'ctools_exaples_main_page',
     'access callback' => TRUE,
     'type' => MENU_NORMAL_ITEM,
   );
   $items['ctools_examples/node-modal/%/%ctools_js'] = array(
-    'title' => 'Ctools examples links',
+    'title' => 'CTools examples links',
     'page callback' => 'ctools_exaples_node_modal_callback',
     'page arguments' => array(2, 3),
     'access callback' => TRUE,
@@ -21,7 +21,7 @@ function ctools_examples_menu() {
   );
 
   $items['ctools_examples/form/%ctools_js'] = array(
-    'title' => 'Ctools examples links',
+    'title' => 'CTools examples links',
     'page callback' => 'ctools_exaples_form_callback',
     'page arguments' => array(2),
     'access callback' => TRUE,
@@ -29,7 +29,7 @@ function ctools_examples_menu() {
   );
 
   $items['ctools_examples/form-modal/%ctools_js'] = array(
-    'title' => 'Ctools form examples links',
+    'title' => 'CTools form examples links',
     'page callback' => 'ctools_examples_form_modal_callback',
     'page arguments' => array(2),
     'access callback' => TRUE,
@@ -59,7 +59,7 @@ function ctools_exaples_main_page() {
   ctools_modal_add_js();
 
   // Include Styles for own custom modal window:
-  ctool_examples_include_styles('modal_example');
+  ctools_examples_include_styles('modal_example');
 
   // Custom links:
   $links = array();
@@ -134,7 +134,7 @@ function ctools_exaples_form_callback($js = NULL) {
 /**
  * Include $style for a modal window.
  */
-function ctool_examples_include_styles($style_type) {
+function ctools_examples_include_styles($style_type) {
   // Define default styles for the modal windows:
   $general_styles = array(
     'modalSize' => array(
