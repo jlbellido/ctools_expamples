@@ -69,8 +69,6 @@ function ctools_exaples_main_page() {
   $links[] = ctools_modal_text_button(t('Show a node form in a  modal window'), 'ctools_examples/form/nojs', t('Click for show a form in a modal window'), 'ctools-modal-ctools-examples-node-style');
   $links[] = ctools_modal_text_button(t('Show a form in modal window'), 'ctools_examples/form-modal/nojs', t('Click for show a form in a modal window'), 'ctools-modal-ctools-examples-form-style');
 
-  // Add CTools' javascript to the page.
-  ctools_modal_add_js();
   $links[] = ctools_modal_text_button(t('Multistep example modal'), 'ctools_examples/example/nojs/form', t('Start'), 'ctools-modal-ctools-examples-multistep-style');
   $links[] = '<div id="ctools-sample">' . t('Here will come result in modal case') . '</div>';
 
