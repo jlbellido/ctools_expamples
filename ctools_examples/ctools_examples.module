@@ -55,6 +55,7 @@ function ctools_exaples_main_page() {
   ctools_include('modal');
   ctools_include('ajax');
 
+  // Add the js neccessary for use CTools:
   ctools_modal_add_js();
 
   // Include Styles for own custom modal window:
@@ -64,13 +65,13 @@ function ctools_exaples_main_page() {
   $links = array();
 
   $links[] = ctools_modal_text_button(t('Show a node in a modal window'), 'ctools_examples/node-modal/1/nojs', t('Click for show a node in a modal window'));
-  $links[] = ctools_modal_text_button(t('Show a node in a modal window(With styles)'), 'ctools_examples/node-modal/1/nojs', t('Click for show a node in a modal window'), 'ctools-modal-ctools-example-modal-style');
-  $links[] = ctools_modal_text_button(t('Show a form in a  modal window'), 'ctools_examples/form/nojs', t('Click for show a form in a modal window'), 'ctools-modal-ctools-example-modal-style');
-  $links[] = ctools_modal_text_button(t('Show a form in modal window'), 'ctools_examples/form-modal/nojs', t('Click for show a form in a modal window'));
+  $links[] = ctools_modal_text_button(t('Show a node in a modal window(With styles)'), 'ctools_examples/node-modal/1/nojs', t('Click for show a node in a modal window'), 'ctools-modal-ctools-examples-node-style');
+  $links[] = ctools_modal_text_button(t('Show a node form in a  modal window'), 'ctools_examples/form/nojs', t('Click for show a form in a modal window'), 'ctools-modal-ctools-examples-node-style');
+  $links[] = ctools_modal_text_button(t('Show a form in modal window'), 'ctools_examples/form-modal/nojs', t('Click for show a form in a modal window'), 'ctools-modal-ctools-examples-form-style');
 
   // Add CTools' javascript to the page.
   ctools_modal_add_js();
-  $links[] = ctools_modal_text_button(t('Multistep example modal'), 'ctools_examples/example/nojs/form', t('Start'));
+  $links[] = ctools_modal_text_button(t('Multistep example modal'), 'ctools_examples/example/nojs/form', t('Start'), 'ctools-modal-ctools-examples-multistep-style');
   $links[] = '<div id="ctools-sample">' . t('Here will come result in modal case') . '</div>';
 
   return array('#theme' => 'item_list', '#items' => $links);
@@ -133,57 +134,59 @@ function ctools_exaples_form_callback($js = NULL) {
 }
 
 /**
- * Include $style_type for a modal window.
+ * Include $style for a modal window.
  */
 function ctool_examples_include_styles($style_type) {
-
-  $style_type = array(
-    'ctools-example-modal-style' => array(
-      'modalSize' => array(
-        'type' => 'fixed',
-        'width' => 500,
-        'height' => 400,
-        'addWidth' => 10,
-        'addHeight' => 10,
-        'contentRight' => 0,
-        'contentBottom' => 0,
-      ),
-      'modalOptions' => array(
-        'opacity' => .6,
-        'background-color' => '#684C31',
-      ),
-      'animation' => 'fadeIn',
-      'modalTheme' => 'CToolsMyModalTheme',
-      'closeText' => t('Close'),
-      'modalmyclass' => 'my-custom-class',
-      'throbber' => theme('image', array('path' => ctools_image_path('throbber.gif', 'ctools_examples'), 'alt' => t('Loading...'), 'title' => t('Loading'))),
-      'closeImage' => theme('image', array('path' => ctools_image_path('modal-close.png', 'ctools_examples'), 'alt' => t('Close window'), 'title' => t('Close window'))),
+  // Define default styles for the modal windows:
+  $general_styles = array(
+    'modalSize' => array(
+      'type' => 'fixed',
+      'width' => 700,
+      'height' => 300,
+      'addWidth' => 10,
+      'addHeight' => 10,
+      'contentRight' => 0,
+      'contentBottom' => 0,
     ),
-    'ctools-form-example-modal-style' => array(
-      'modalSize' => array(
-        'type' => 'fixed',
-        'width' => 300,
-        'height' => 300,
-        'addWidth' => 10,
-        'addHeight' => 10,
-        'contentRight' => 0,
-        'contentBottom' => 0,
-      ),
-      'modalOptions' => array(
-        'opacity' => .6,
-        'background-color' => '#684C31',
-      ),
-      'animation' => 'fadeIn',
-      'modalTheme' => 'CToolsMyModalTheme',
-      'closeText' => t('Close'),
-      'modalmyclass' => 'my-custom-class',
-      'throbber' => theme('image', array('path' => ctools_image_path('throbber.gif', 'ctools_examples'), 'alt' => t('Loading...'), 'title' => t('Loading'))),
-      'closeImage' => theme('image', array('path' => ctools_image_path('modal-close.png', 'ctools_examples'), 'alt' => t('Close window'), 'title' => t('Close window'))),
+    'modalOptions' => array(
+      'opacity' => .6,
+      'background-color' => '#684C31',
     ),
+    'animation' => 'fadeIn',
+    'modalTheme' => 'CToolsMyModalTheme',
+    'closeText' => t('Close'),
+    'modalmyclass' => 'my-custom-class',
+    'throbber' => theme('image', array('path' => ctools_image_path('throbber.gif', 'ctools_examples'), 'alt' => t('Loading...'), 'title' => t('Loading'))),
+    'closeImage' => theme('image', array('path' => ctools_image_path('modal-close.png', 'ctools_examples'), 'alt' => t('Close window'), 'title' => t('Close window'))),
   );
-  drupal_add_js($style_type, 'setting');
 
+  // Style for node in modal:
+  $style_node_modal = $general_styles;
+  $style_node_modal['modalSize']['width'] = 1000;
+  $style_node_modal['modalSize']['height'] = 500;
+
+  // Style for simple form in modal:
+  $style_simple_form_modal = $general_styles;
+  $style_simple_form_modal['modalSize']['width'] = 300;
+  $style_simple_form_modal['modalSize']['height'] = 100;
+
+  // Style for multistep in modal:
+  $style_multistep_modal = $general_styles;
+  $style_multistep_modal['modalSize']['width'] = 700;
+  $style_multistep_modal['modalSize']['height'] = 200;
+
+  // Define the styles by each case:
+  $styles = array(
+    'ctools-examples-node-style' => $style_node_modal,
+    'ctools-examples-form-style' => $style_simple_form_modal,
+    'ctools-examples-multistep-style' => $style_multistep_modal,
+  );
+
+  drupal_add_js($styles, 'setting');
+
+  // Load our custom template for the modal :
   ctools_add_js('ctools_examples', 'ctools_examples');
+  // Load our css for the modal:
   ctools_add_css('ctools-ajax-sample', 'ctools_ajax_sample');
 }
 
