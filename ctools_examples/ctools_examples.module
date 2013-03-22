@@ -67,13 +67,13 @@ function ctools_exaples_main_page() {
   $links[] = ctools_modal_text_button(t('Show a node in a modal window(With styles)'), 'ctools_examples/node-modal/1/nojs', t('Click for show a node in a modal window'), 'ctools-modal-ctools-example-modal-style');
   $links[] = ctools_modal_text_button(t('Show a form in a  modal window'), 'ctools_examples/form/nojs', t('Click for show a form in a modal window'), 'ctools-modal-ctools-example-modal-style');
   $links[] = ctools_modal_text_button(t('Show a form in modal window'), 'ctools_examples/form-modal/nojs', t('Click for show a form in a modal window'));
-  
+
   // Add CTools' javascript to the page.
   ctools_modal_add_js();
   $links[] = ctools_modal_text_button(t('Multistep example modal'), 'ctools_examples/example/nojs/form', t('Start'));
   $links[] = '<div id="ctools-sample">' . t('Here will come result in modal case') . '</div>';
-  
-  return  array('#theme' => 'item_list', '#items' => $links);
+
+  return array('#theme' => 'item_list', '#items' => $links);
 }
 
 /**
@@ -141,7 +141,7 @@ function ctool_examples_include_styles($style_type) {
     'ctools-example-modal-style' => array(
       'modalSize' => array(
         'type' => 'fixed',
-        'width' => 1100,
+        'width' => 500,
         'height' => 400,
         'addWidth' => 10,
         'addHeight' => 10,
@@ -212,9 +212,7 @@ function ctools_examples_form_modal_callback($js = NULL) {
     $output = array();
     $output[] = ctools_modal_command_display(t('Login Success'), '<div class="modal-message">Login successful. <a href="ctools_examples">Go back</a>.</div>');
   }
-
   print(ajax_render($output));
-  exit();
 }
 
 /**
